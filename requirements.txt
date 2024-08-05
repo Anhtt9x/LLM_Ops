@@ -1,0 +1,9 @@
+langchain
+langchain-community
+langchain-huggingface
+bs4
+tiktoken
+boto3
+chromadb
+
+-e .
