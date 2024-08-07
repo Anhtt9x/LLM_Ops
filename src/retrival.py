@@ -1,6 +1,6 @@
 from langchain.chains.retrieval_qa.base import RetrievalQA
 from langchain_community.vectorstores import FAISS
-from transformers import AutoTokenizer, AutoModelForCausalLM ,pipeline
+from transformers import AutoTokenizer, AutoModel ,pipeline
 from langchain_huggingface import HuggingFacePipeline
 from langchain_aws import Bedrock
 import boto3
@@ -9,6 +9,7 @@ from langchain_core.prompts.prompt import PromptTemplate
 import os
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from dotenv import load_dotenv
+from langchain_community.llms.ctransformers import CTransformers
 # bedrock_client = boto3.client(service_name="bedrock-runtime")
 
 # def get_bedrock_llm():
@@ -35,23 +36,13 @@ Helpful answer:
 
 prompt = PromptTemplate(template=prompt_template, input_variables=['context','question'])
 
+def get_llama2():
+    llm = CTransformers(model="TheBloke/Llama-2-7B-Chat-GGML", model_type="llama", config={"max_new_tokens": 512, "temperature":0.7},
+                        model_file="llama-2-7b-chat.ggmlv3.q4_0.bin")
+    
+    return llm
 
-tokenizer = AutoTokenizer.from_pretrained("TheBloke/Llama-2-7B-Chat-GGML")
-model = AutoModelForCausalLM.from_pretrained("TheBloke/Llama-2-7B-Chat-GGML", device_map='auto')
-pipeline = pipeline(task="text-generation",
-                    model=model,
-                    tokenizer=tokenizer,
-                    torch_dtype=torch.bfloat16,
-                   trust_remote_code=True,
-                   device_map='auto',
-                   max_length=1000,
-                   do_sample=True,
-                   top_k=10,
-                   num_return_sequences=1,
-                    truncation=True,
-                   eos_token_id=tokenizer.eos_token_id,)
 
-llm = HuggingFacePipeline(pipeline=pipeline, model_kwargs={"temperature":0})
 embedding = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-mpnet-base-v2")
 
 def get_response_llm(llm, vectorstore_faiss, query):
@@ -67,5 +58,5 @@ def get_response_llm(llm, vectorstore_faiss, query):
 
 
 if __name__ =="__main__":
-    get_response_llm(llm=llm, vectorstore_faiss=FAISS.load_local("faiss_index",embedding,allow_dangerous_deserialization=True),
+    get_response_llm(llm=get_llama2(), vectorstore_faiss=FAISS.load_local("faiss_index",embedding,allow_dangerous_deserialization=True),
                      query="What is RAG token ?")

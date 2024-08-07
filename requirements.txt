@@ -14,5 +14,6 @@ transformers
 accelerate
 bitsandbytes
 python-dotenv
-
+sentencepiece
+ctransformers
 -e .
