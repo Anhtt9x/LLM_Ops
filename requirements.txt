@@ -7,5 +7,6 @@ tiktoken
 boto3
 chromadb
 awscli
-streamlit 
+streamlit
+pypdf
 -e .
