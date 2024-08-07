@@ -9,4 +9,10 @@ chromadb
 awscli
 streamlit
 pypdf
+faiss-cpu
+transformers
+accelerate
+bitsandbytes
+python-dotenv
+
 -e .

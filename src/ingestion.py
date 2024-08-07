@@ -7,11 +7,13 @@ import boto3
 import json
 import os
 import sys
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
+
+# bedrock_client=boto3.client(service_name="bedrock-runtime")
+# embedding = BedrockEmbeddings(client=bedrock_client,model_id="")
 
 
-bedrock_client=boto3.client(service_name="bedrock-runtime")
-embedding = BedrockEmbeddings(client=bedrock_client,model_id="")
-
+embedding = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-mpnet-base-v2")
 
 def data_ingestion():
     documents = PyPDFDirectoryLoader("data").load()
@@ -30,8 +32,8 @@ def get_vector_store(docs,embedding):
 
     doc_search.save_local("faiss_index")
 
-
+    
 
 if __name__ == "__main__":
     docs=data_ingestion()
-    get_vector_store(docs)
+    get_vector_store(docs,embedding)
