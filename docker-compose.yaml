@@ -1,0 +1,8 @@
+services:
+  application:
+    build: 
+      context: ./
+    image: LLM_OPS
+    container_name: LLM_OPS_CON
+    ports:
+      - "8501:8501"
